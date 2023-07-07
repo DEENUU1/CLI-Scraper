@@ -39,3 +39,26 @@ class ScraperConfig:
         except Exception as e:
             print(f"Couldn't accept cookies: {str(e)}")
 
+
+URL = 'https://www.x-kom.pl/g-2/c/161-akcesoria-komputerowe.html'
+config = ScraperConfig(cookie_button=".sc-15ih3hi-0.sc-1p1bjrl-9.dRLEBj", url=URL)
+config.get_driver()
+config.accept_cookies()
+
+try:
+    # Get the number of pages
+    pages = config.driver.find_elements(By.CSS_SELECTOR, 'a.sc-1h16fat-0.sc-1xy3kzh-0.gPKgJT')
+    max_page = max([int(page.get_attribute('href').split('=')[-1]) for page in pages])
+
+    for page_number in range(1, max_page+1):
+        config.driver.get(f"https://www.x-kom.pl/g-2/c/161-akcesoria-komputerowe.html?page={page_number}")
+        prices = config.driver.find_elements(By.CSS_SELECTOR, 'span[data-name="productPrice"]')
+        product_names = config.driver.find_elements(By.CSS_SELECTOR, 'h3.sc-16zrtke-0.kGLNun.sc-1yu46qn-9.feSnpB')
+
+        for price, name in zip(prices, product_names):
+            print(f"Product: {name.text}, Price: {price.text}")
+
+except Exception as e:
+    print(f"There was an error: {str(e)}")
+
+config.quit_driver()
