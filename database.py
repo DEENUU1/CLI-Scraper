@@ -32,6 +32,19 @@ class Website(Base):
     products = relationship("Product", back_populates="website")
 
 
+class WebsiteInput(BaseModel):
+    name: str
+    object_number: int
+
+
+class WebsiteOutput(WebsiteInput):
+    id: int
+    last_update: datetime
+
+    class Config:
+        orm_mode = True
+
+
 class Product(Base):
     __tablename__ = "products"
 
@@ -43,3 +56,19 @@ class Product(Base):
     date_updated = Column(DateTime, default=datetime.utcnow)
 
     website = relationship("Website", back_populates="products")
+
+
+class ProductInput(BaseModel):
+    name: str
+    price: float
+    url: str
+    website_id: int
+
+
+class ProductOutput(ProductInput):
+    id: int
+    date_created: datetime
+    date_updated: datetime
+
+    class Config:
+        orm_mode = True
