@@ -1,4 +1,6 @@
 import json
+from typing import List
+
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
@@ -6,14 +8,20 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.action_chains import ActionChains
 from webdriver_manager.chrome import ChromeDriverManager
 
+"""
+Scrape all products and prices from x-kom.pl 
+"""
 
+# Set chrome options for headless browsing
 chrome_options = Options()
 chrome_options.add_argument("--headless")
-
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
 
 
-def get_ids():
+def get_ids() -> List[str]:
+    """
+    Return a list of category ids from x-kom.pl
+    """
     with open("x_kom_categories.json", 'r', encoding="utf-8") as file:
         data = json.load(file)
 
@@ -48,26 +56,31 @@ def return_all_urls():
     return urls
 
 
-counter = 0
-for url in return_all_urls():
+def scrape_xkom():
+    """
+    Scrape x-kom.pl
+    """
 
-    driver.get(url)
+    counter = 0
+    for url in return_all_urls():
 
-    if counter == 0:
+        driver.get(url)
+
+        if counter == 0:
+            try:
+                cookie_button = driver.find_element(By.CSS_SELECTOR, ".sc-15ih3hi-0.sc-1p1bjrl-9.dRLEBj")
+                ActionChains(driver).move_to_element(cookie_button).click(cookie_button).perform()
+            except Exception as e:
+                print(f"Error while clicking on cookie button: {str(e)}")
+        counter += 1
         try:
-            cookie_button = driver.find_element(By.CSS_SELECTOR, ".sc-15ih3hi-0.sc-1p1bjrl-9.dRLEBj")
-            ActionChains(driver).move_to_element(cookie_button).click(cookie_button).perform()
+            prices = driver.find_elements(By.CSS_SELECTOR, 'span[data-name="productPrice"]')
+            product_names = driver.find_elements(By.CSS_SELECTOR, 'h3.sc-16zrtke-0.kGLNun.sc-1yu46qn-9.feSnpB')
+
+            for price, name in zip(prices, product_names):
+                print(f"Product: {name.text}, Price: {price.text}")
+
         except Exception as e:
-            print(f"Nie udało się zamknąć modala cookies: {str(e)}")
-    counter += 1
-    try:
-        prices = driver.find_elements(By.CSS_SELECTOR, 'span[data-name="productPrice"]')
-        product_names = driver.find_elements(By.CSS_SELECTOR, 'h3.sc-16zrtke-0.kGLNun.sc-1yu46qn-9.feSnpB')
+            print(f"Error while scraping: {str(e)}")
 
-        for price, name in zip(prices, product_names):
-            print(f"Produkt: {name.text}, Cena: {price.text}")
-
-    except Exception as e:
-        print(f"Nie udało się pobrać informacji o produktach: {str(e)}")
-
-driver.quit()
+    driver.quit()
