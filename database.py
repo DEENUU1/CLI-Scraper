@@ -100,6 +100,13 @@ def website_exists(db: Session, website_name: str) -> bool:
     return db.query(Website).filter(Website.name == website_name).first() is not None
 
 
+def get_website_id(db: Session, website_name: str):
+    """
+    Get website id
+    """
+    return db.query(Website).filter(Website.name == website_name).first().id
+
+
 def update_website():
     pass
 

@@ -7,6 +7,11 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.action_chains import ActionChains
 from webdriver_manager.chrome import ChromeDriverManager
+from ..database import website_exists, create_website, create_product, SessionLocal, product_exists, get_website_id
+from sqlalchemy.orm import Session
+
+db = SessionLocal()
+
 
 """
 Scrape all products and prices from x-kom.pl 
@@ -62,6 +67,7 @@ def scrape_xkom():
     """
 
     counter = 0
+    scraped_data = []
     for url in return_all_urls():
 
         driver.get(url)
@@ -80,17 +86,28 @@ def scrape_xkom():
             for price, name, url in zip(prices, product_names, product_url):
                 print(f"Product: {name.text}, Price: {price.text}, URL: {url.get_attribute('href')}")
 
+                scraped_data.append([name.text, float(price.text.replace(",", ".")), url.get_attribute('href')])
+
         except Exception as e:
             print(f"Error while scraping: {str(e)}")
 
     driver.quit()
 
-    return price, name, url
+    return scraped_data
 
 
 def xkom_save_to_database():
     """
     Save products to database
     """
-    price, name, url = scrape_xkom()
+    data = scrape_xkom()
 
+    if not website_exists(db, "X-Kom"):
+        create_website(db, "X-Kom")
+
+    website_id = get_website_id(db, "X-Kom")
+
+    for product in data:
+        if not product_exists(db, product[0]):
+            create_product(db, product[0], product[1], product[2], website_id)
+            print(f"Product {product[0]} saved to database")
