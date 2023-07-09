@@ -76,9 +76,9 @@ def scrape_xkom():
         try:
             prices = driver.find_elements(By.CSS_SELECTOR, 'span[data-name="productPrice"]')
             product_names = driver.find_elements(By.CSS_SELECTOR, 'h3.sc-16zrtke-0.kGLNun.sc-1yu46qn-9.feSnpB')
-
-            for price, name in zip(prices, product_names):
-                print(f"Product: {name.text}, Price: {price.text}")
+            product_url = driver.find_elements(By.CSS_SELECTOR, "a.sc-1h16fat-0.dNrrmO")
+            for price, name, url in zip(prices, product_names, product_url):
+                print(f"Product: {name.text}, Price: {price.text}, URL: {url.get_attribute('href')}")
 
         except Exception as e:
             print(f"Error while scraping: {str(e)}")

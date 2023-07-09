@@ -1,10 +1,9 @@
 from datetime import datetime
-from typing import Optional, List
 from pydantic import BaseModel
 from sqlalchemy import create_engine, Float
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import ForeignKey, Column, Integer, String, DateTime, ForeignKey
-from sqlalchemy.orm import Session, sessionmaker, relationship
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
+from sqlalchemy.orm import sessionmaker, relationship
 
 SQLALCHEMY_DATABASE_URL = "sqlite:///./database.db"
 engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
@@ -22,6 +21,9 @@ def get_db():
 
 
 class Website(Base):
+    """
+    Model represents Website from which product got scraped
+    """
     __tablename__ = "websites"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -46,6 +48,9 @@ class WebsiteOutput(WebsiteInput):
 
 
 class Product(Base):
+    """
+    Product model represents scraped product
+    """
     __tablename__ = "products"
 
     id = Column(Integer, primary_key=True, index=True)
