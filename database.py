@@ -134,3 +134,10 @@ def update_product():
 
 def delete_product():
     pass
+
+
+def product_exists(db: Session, product_name: str) -> bool:
+    """
+    Check if product exists
+    """
+    return db.query(Product).filter(Product.name == product_name).first() is not None
