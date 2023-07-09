@@ -84,3 +84,13 @@ def scrape_xkom():
             print(f"Error while scraping: {str(e)}")
 
     driver.quit()
+
+    return price, name, url
+
+
+def xkom_save_to_database():
+    """
+    Save products to database
+    """
+    price, name, url = scrape_xkom()
+

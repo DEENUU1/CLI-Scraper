@@ -3,7 +3,7 @@ from pydantic import BaseModel
 from sqlalchemy import create_engine, Float
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
-from sqlalchemy.orm import sessionmaker, relationship
+from sqlalchemy.orm import sessionmaker, relationship, Session
 
 SQLALCHEMY_DATABASE_URL = "sqlite:///./database.db"
 engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
@@ -77,3 +77,50 @@ class ProductOutput(ProductInput):
 
     class Config:
         orm_mode = True
+
+
+def create_website(
+        db: Session,
+        name: str
+) -> WebsiteInput:
+    """
+    Create website object
+    """
+    db_website = Website(name=name, last_update=datetime.utcnow())
+    db.add(db_website)
+    db.commit()
+    db.refresh(db_website)
+    return db_website
+
+
+def update_website():
+    pass
+
+
+def delete_website():
+    pass
+
+
+def create_product(
+        db: Session,
+        name: str,
+        price: float,
+        url: str,
+        website_id: int
+) -> ProductInput:
+    """
+    Create product object
+    """
+    db_product = Product(name=name, price=price, url=url, website_id=website_id, date_created=datetime.utcnow(), date_updated=datetime.utcnow())
+    db.add(db_product)
+    db.commit()
+    db.refresh(db_product)
+    return db_product
+
+
+def update_product():
+    pass
+
+
+def delete_product():
+    pass
