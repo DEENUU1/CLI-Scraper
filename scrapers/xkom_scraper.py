@@ -22,7 +22,7 @@ def get_ids() -> List[str]:
     """
     Return a list of category ids from x-kom.pl
     """
-    with open("x_kom_categories.json", 'r', encoding="utf-8") as file:
+    with open("scrapers/x_kom_categories.json", 'r', encoding="utf-8") as file:
         data = json.load(file)
 
     ids = []
