@@ -93,6 +93,13 @@ def create_website(
     return db_website
 
 
+def website_exists(db: Session, website_name: str) -> bool:
+    """
+    Check if website exists
+    """
+    return db.query(Website).filter(Website.name == website_name).first() is not None
+
+
 def update_website():
     pass
 
@@ -111,7 +118,10 @@ def create_product(
     """
     Create product object
     """
-    db_product = Product(name=name, price=price, url=url, website_id=website_id, date_created=datetime.utcnow(), date_updated=datetime.utcnow())
+    db_product = Product(
+        name=name, price=price, url=url, website_id=website_id,
+        date_created=datetime.utcnow(), date_updated=datetime.utcnow()
+    )
     db.add(db_product)
     db.commit()
     db.refresh(db_product)
