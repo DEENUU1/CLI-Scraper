@@ -7,8 +7,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.action_chains import ActionChains
 from webdriver_manager.chrome import ChromeDriverManager
-from database import website_exists, create_website, create_product, SessionLocal, product_exists, get_website_id
-from sqlalchemy.orm import Session
+from Persistence.database import website_exists, create_website, create_product, SessionLocal, product_exists, get_website_id
 
 db = SessionLocal()
 
