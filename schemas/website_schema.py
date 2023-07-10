@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import List, Optional
 from pydantic import BaseModel
 from sqlalchemy.orm import relationship
-from product_dto import Product
+from product_schema import Product
 
 
 class WebsiteBase(BaseModel):
