@@ -47,6 +47,20 @@ class WebsiteOutput(WebsiteInput):
         orm_mode = True
 
 
+class ProductPrice(Base):
+    """
+    ProductPrice model represents scraped product price for a specified product
+    """
+    __tablename__ = "product_prices"
+
+    id = Column(Integer, primary_key=True, index=True)
+    product_id = Column(Integer, ForeignKey("products.id"))
+    price = Column(Float)
+    date_created = Column(DateTime, default=datetime.utcnow)
+
+    product = relationship("Product", back_populates="prices")
+
+
 class Product(Base):
     """
     Product model represents scraped product
@@ -55,12 +69,12 @@ class Product(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True)
-    price = Column(Float)
     website_id = Column(Integer, ForeignKey("websites.id"))
     date_created = Column(DateTime, default=datetime.utcnow)
     date_updated = Column(DateTime, default=datetime.utcnow)
 
     website = relationship("Website", back_populates="products")
+    prices = relationship("ProductPrice", back_populates="product")
 
 
 class ProductInput(BaseModel):

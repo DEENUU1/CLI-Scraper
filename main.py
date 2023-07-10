@@ -22,5 +22,13 @@ def xkom():
         console.print(xkom_products)
 
 
+@app.command(help="Save scraped xkom products to databse")
+def xkom_db():
+    """
+    Save scraped xkom products to databse
+    """
+    xkom_scraper.xkom_save_to_database()
+
+
 if __name__ == "__main__":
     app()
